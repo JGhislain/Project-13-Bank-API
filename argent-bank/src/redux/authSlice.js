@@ -5,9 +5,16 @@ import axios from 'axios';
 const API_URL = 'http://localhost:3001/api/v1';
 
 // Thunk pour la connexion
-export const loginUser = createAsyncThunk('auth/loginUser', async (userData) => {
-  const response = await axios.post(`${API_URL}/user/login`, userData);
-  return response.data;
+export const loginUser = createAsyncThunk('auth/loginUser', async (userData, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(`${API_URL}/user/login`, userData);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue(error.message);
+  }
 });
 
 const authSlice = createSlice({
@@ -33,13 +40,12 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.token = action.payload.body.token;
         state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.payload ? action.payload.message : action.error.message;
       });
   },
 });

@@ -15,6 +15,17 @@ export const fetchUserProfile = createAsyncThunk('profile/fetchUserProfile', asy
   return response.data;
 });
 
+// Thunk pour mettre à jour le profil utilisateur
+export const updateUserProfile = createAsyncThunk('profile/updateUserProfile', async (userData, { getState }) => {
+  const token = getState().auth.token;
+  const response = await axios.put(`${API_URL}/user/profile`, userData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+});
+
 const profileSlice = createSlice({
   name: 'profile',
   initialState: {
@@ -34,9 +45,19 @@ const profileSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.profile = action.payload.body;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
       });
   },
 });
 
-// Exporter le reducer par défaut
 export default profileSlice.reducer;

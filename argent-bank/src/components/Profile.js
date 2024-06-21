@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/authSlice';
-import { fetchUserProfile } from '../redux/profileSlice';
+import { fetchUserProfile, updateUserProfile } from '../redux/profileSlice'; // Import de l'action updateUserProfile
 
 // Composant représentant la page de profil utilisateur
 const Profile = () => {
@@ -12,6 +12,10 @@ const Profile = () => {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { profile, status, error } = useSelector((state) => state.profile);
 
+  const [editMode, setEditMode] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchUserProfile());
@@ -19,6 +23,22 @@ const Profile = () => {
       navigate('/login');
     }
   }, [dispatch, isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.firstName);
+      setLastName(profile.lastName);
+    }
+  }, [profile]);
+
+  const handleEditClick = () => {
+    setEditMode(true);
+  };
+
+  const handleSaveClick = () => {
+    dispatch(updateUserProfile({ firstName, lastName }));
+    setEditMode(false);
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -32,7 +52,7 @@ const Profile = () => {
   if (status === 'failed') {
     return <div>Error: {error}</div>;
   }
-  
+
   return (
     <main className="main bg-dark">
       {/* Barre de navigation */}
@@ -56,7 +76,15 @@ const Profile = () => {
       {/* Contenu du profil */}
       <div className="header">
         <h1>Welcome back<br />{profile?.firstName} {profile?.lastName}!</h1>
-        <button className="edit-button">Edit Name</button>
+        {editMode ? (
+          <div>
+            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            <button className="save-button" onClick={handleSaveClick}>Save</button>
+          </div>
+        ) : (
+          <button className="edit-button" onClick={handleEditClick}>Edit Name</button>
+        )}
       </div>
       <h2 className="sr-only">Accounts</h2>
 

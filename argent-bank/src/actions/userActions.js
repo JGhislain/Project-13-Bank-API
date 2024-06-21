@@ -1,9 +1,12 @@
 import axios from 'axios';
 
+// URL de base de l'API
+const API_URL = 'http://localhost:3001/api/v1';
+
 export const fetchUserProfile = () => async (dispatch, getState) => {
   try {
     const token = getState().auth.user.token;
-    const response = await axios.get('URL_DE_L_API/user/profile', {
+    const response = await axios.get(`${API_URL}/user/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -17,7 +20,7 @@ export const fetchUserProfile = () => async (dispatch, getState) => {
 export const updateUserProfile = (profileData) => async (dispatch, getState) => {
   try {
     const token = getState().auth.user.token;
-    const response = await axios.put('URL_DE_L_API/user/profile', profileData, {
+    const response = await axios.put(`${API_URL}/user/profile`, profileData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
