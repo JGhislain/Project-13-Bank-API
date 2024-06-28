@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 // Composant représentant la page d'accueil
 const HomePage = () => {
   return (
-    // La syntaxe <>...</> est une version abrégée de <React.Fragment>
-    // Les fragments React permettent de retourner plusieurs éléments enfants sans ajouter de nœud supplémentaire au DOM
-    // Sinon il faudrait ajouter par exemple une balise <div> qui englobe tout les éléments
+    /* La syntaxe <>...</> est une version abrégée de <React.Fragment>
+       Les fragments React permettent de retourner plusieurs éléments enfants sans ajouter de nœud supplémentaire au DOM
+       Sinon il faudrait ajouter par exemple une balise <div> qui englobe tout les éléments */
     <>
       {/* Barre de navigation */}
       <nav className="main-nav">

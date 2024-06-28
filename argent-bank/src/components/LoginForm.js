@@ -5,19 +5,25 @@ import { loginUser } from '../redux/authSlice';
 
 // Composant représentant la page de connexion
 const LoginForm = () => {
+  // État pour l'email de l'utilisateur
   const [email, setEmail] = useState('');
+  // État pour le mot de passe de l'utilisateur
   const [password, setPassword] = useState('');
+  // Envoyer des actions Redux
   const dispatch = useDispatch();
+  // Naviguer vers d'autres pages
   const navigate = useNavigate();
+  // Récupère l'état de l'authentification
   const { status, error } = useSelector((state) => state.auth);
 
+  // Gère la soumission du formulaire de connexion
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(loginUser({ email, password })).then(() => {
+      // Redirige vers la page de profil après connexion réussie
       navigate('/profile');
     });
   };
-
 
   return (
     <main className="main bg-dark">
@@ -53,8 +59,10 @@ const LoginForm = () => {
             <label htmlFor="remember-me">Remember me</label>
           </div>
           <button className="sign-in-button" type="submit" disabled={status === 'loading'}>
+            {/* Affiche un message de chargement pendant la connexion */}
             {status === 'loading' ? 'Signing In...' : 'Sign In'}
           </button>
+          {/* Affiche un message d'erreur en cas d'échec */}
           {status === 'failed' && <p className="error">{error}</p>}
         </form>
       </section>

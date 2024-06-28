@@ -2,28 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/authSlice';
-import { fetchUserProfile, updateUserProfile } from '../redux/profileSlice'; // Import de l'action updateUserProfile
+// Import de l'action updateUserProfile
+import { fetchUserProfile, updateUserProfile } from '../redux/profileSlice';
 
 // Composant représentant la page de profil utilisateur
 const Profile = () => {
 
+  // Envoyer des actions Redux
   const dispatch = useDispatch();
+  // Naviguer vers d'autres pages
   const navigate = useNavigate();
+  // Récupère l'état d'authentification de l'utilisateur
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+  // Récupère l'état du profil utilisateur
   const { profile, status, error } = useSelector((state) => state.profile);
 
+  // État pour le mode édition du profil
   const [editMode, setEditMode] = useState(false);
+  // État pour le prénom de l'utilisateur
   const [firstName, setFirstName] = useState('');
+  // État pour le nom de famille de l'utilisateur
   const [lastName, setLastName] = useState('');
 
+  // Effet pour récupérer le profil utilisateur si l'utilisateur est authentifié
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchUserProfile());
     } else {
+      // Redirige vers la page de connexion si non authentifié
       navigate('/login');
     }
   }, [dispatch, isAuthenticated, navigate]);
 
+  // Effet pour mettre à jour les champs du formulaire avec les données du profil utilisateur
   useEffect(() => {
     if (profile) {
       setFirstName(profile.firstName);
@@ -31,24 +42,29 @@ const Profile = () => {
     }
   }, [profile]);
 
+  // Passe en mode édition
   const handleEditClick = () => {
     setEditMode(true);
   };
 
+  // Enregistre les modifications du profil utilisateur
   const handleSaveClick = () => {
     dispatch(updateUserProfile({ firstName, lastName }));
     setEditMode(false);
   };
 
+  // Déconnecte l'utilisateur et redirige vers la page d'accueil
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
   };
 
+  // Affiche un message de chargement si le profil est en cours de récupération
   if (status === 'loading') {
     return <div>Loading...</div>;
   }
 
+  // Affiche un message d'erreur en cas d'échec de récupération du profil
   if (status === 'failed') {
     return <div>Error: {error}</div>;
   }
@@ -76,6 +92,7 @@ const Profile = () => {
       {/* Contenu du profil */}
       <div className="header">
         <h1>Welcome back<br />{profile?.firstName} {profile?.lastName}!</h1>
+        {/* Si le mode édition est activé, affiche les champs de saisie pour le prénom et le nom */}
         {editMode ? (
           <div>
             <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
@@ -83,6 +100,7 @@ const Profile = () => {
             <button className="save-button" onClick={handleSaveClick}>Save</button>
           </div>
         ) : (
+          // Si le mode édition n'est pas activé, affiche le bouton pour passer en mode édition
           <button className="edit-button" onClick={handleEditClick}>Edit Name</button>
         )}
       </div>
