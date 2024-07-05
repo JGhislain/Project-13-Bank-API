@@ -153,31 +153,6 @@ paths:
               $ref: '#/definitions/TransactionGroup'
         '401':
           description: Unauthorized
-    post:
-      security:
-      # Indique que l'authentification Bearer est nécessaire
-        - Bearer: []
-      tags:
-        - Transaction Module
-      summary: Add a new transaction
-      description: API to add a new transaction
-      parameters:
-        - in: body
-          name: body
-          description: Transaction Payload
-          required: true
-          schema:
-          # Référence à la définition du schéma Transaction
-            $ref: '#/definitions/Transaction'
-      produces:
-        - application/json
-      responses:
-        '201':
-          description: Transaction created successfully
-        '400':
-          description: Invalid Fields
-        '401':
-          description: Unauthorized
   # Endpoint pour les opérations spécifiques sur une transaction donnée.
   /transactions/{id}:
     get:
